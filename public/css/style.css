@@ -1,0 +1,15 @@
+.clear{
+	clear:both;
+}
+
+#fwdBackSlider{
+	height:200px;
+}
+
+.left{
+	float:left;
+}
+
+.right{
+	float:right;
+}

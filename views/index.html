@@ -1,0 +1,37 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>Robot</title>
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript" ></script>
+</head>
+<body>
+	<h1>Robot!</h1>
+	<span id="currentSpeed" ></span>
+	<input id="btnFwd" type="button" value="forward"/><br/>
+	<input id="btnBack" type="button" value="back"/>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#btnFwd").click(function(){move("/forward")});
+			$("#btnBack").click(function(){move("/backward")});
+		});
+		
+		function move(urlAction){
+			var data = JSON.stringify({"direction":urlAction});
+			$.ajax({
+				type: "POST",
+				url:urlAction,
+				data:data,
+				success: function(data){
+
+					$("#currentSpeed").html(data.direction);
+				},
+				error: function(){alert("fails");}
+				
+			});
+		}
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>Robot</title>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" >
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" >
+	<script src="//code.jquery.com/jquery-1.11.1.min.js" type="text/javascript" ></script>
+	<script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js" type="text/javascript" ></script>
+	
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<h1>Robot!</h1>
+	Current Speed: &nbsp;<span id="currentSpeed" ></span><br/>
+	Last Action: &nbsp;<span id="lastAction"></span><br/>
+	<input id="btnFwd" type="button" value="forward"/><br/>
+	<input id="btnBack" type="button" value="back"/><br />
+	<input id="btnStop" type="button" value="stop"/>
+	<input id="btnRight" type="button" value="right"/>
+	<input id="btnLeft" type="button" value="left"/>
+
+	<script type="text/javascript">
+		var socket=io.connect('http://192.168.1.115:3000');
+		
+		$(document).ready(function(){
+			/*$("#btnFwd").click(function(){
+				socket.emit("fwd",{});
+			});
+			$("#btnBack").click(function(){
+				socket.emit("rev",{});
+			});
+			$("#btnStop").click(function(){
+				socket.emit("stop",{});
+			});
+			$("#btnRight").click(function(){
+				socket.emit("right",{});
+			});
+			$("#btnLeft").click(function(){
+				socket.emit("left",{});
+			});*/
+			$("#leftRightSlider").slider();
+			
+			$("#fwdBackSlider").slider({
+				orientation: "vertical",
+				range: "min",
+				min: 0,
+				max: 100,
+				value: 50,
+				slide: function( event, ui){ /* change fwd/ back speed */ }
+			});
+		});
+		
+	</script>
+	
+	<iframe id="vidFrame" src="http://192.168.1.115/clean.php" ></iframe>
+	<div id="fwdBackSlider" class="right" ></div>
+	<br class="clear" />
+	<div id="leftRightSlider" ></div>
+</body>
+</html>

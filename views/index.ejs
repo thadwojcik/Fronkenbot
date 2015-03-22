@@ -1,0 +1,68 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>Robot</title>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" >
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="/css/style.css" >
+	<script src="//code.jquery.com/jquery-1.11.1.min.js" type="text/javascript" ></script>
+	<script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js" type="text/javascript" ></script>	
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<h1>Robot!</h1>
+	Current left Speed pulse rate: &nbsp;<span id="currentLeftSpeed" ></span><br/>
+	Current right Speed pulse rate: &nbsp;<span id="currentRightSpeed" ></span><br/>
+	left right value: <span id="currentLeftRight"></span><br/>
+	<script type="text/javascript">
+		const STOP_SPEED = 1465;
+		var socket=io.connect("http://192.168.1.119:3000");
+		
+		var wheelState = {
+				leftSpeed: STOP_SPEED,
+				rightSpeed: STOP_SPEED
+		};
+		
+		$(document).ready(function(){
+			// initialize the speed
+			$("#currentLeftSpeed").text(STOP_SPEED);
+			$("#currentRightSpeed").text(STOP_SPEED);
+			
+			$("#btnStop").click(function(){
+				$("#fwdBackSlider").slider("value", STOP_SPEED);// don't like this, should get the value from the server
+				socket.emit("stop",{ });
+			});
+			
+			$("#btnLeft").click(function(){				
+				socket.emit("right",{ });				
+			});
+			
+			$("#btnRight").click(function(){				
+				socket.emit("left",{ });
+			});
+						
+			$("#fwdBackSlider").slider({
+				orientation: "vertical",
+				range: "min",
+				min: 640,
+				max: 2304,
+				value: STOP_SPEED,
+				change:function( event, ui){									
+					socket.emit("fwdBckSpeed",{ fwdBckSpeed: ui.value} );
+				}				
+			});
+		});
+		
+	</script>
+	<div>
+		<iframe id="vidFrame" src="http://192.168.1.119/clean.php" class="left" style="height:350px;width:600px;",></iframe>
+		<div id="fwdBackSlider" class="left" ></div>
+	</div> 
+	<input id="btnLeft" type ="button" value="left" />
+	<input id="btnStop" type="button" value="stop"/>
+	<input id="btnRight" type ="button" value="right" />
+	<br class="clear" />
+	
+</body>
+</html>
