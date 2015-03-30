@@ -6,6 +6,7 @@ var express= require("express"),
 	http=require("http"),
 	server=http.createServer(app).listen(3000),
     io = require("socket.io").listen(server);
+var SPEED_INCREMENT = 20;
 
 app.set('views', __dirname + '/views');
 app.set("view engine", "ejs");
@@ -27,13 +28,17 @@ io.on("connection", function(socket){
 	
 	socket.on("right",function(data){
 		console.log("right turn");	
-		driver.turnRight();	
+		
+		driver.setRightWheelSpeed(driver.getCurrentSpeed() + SPEED_INCREMENT);
+		driver.setLeftWheelSpeed(driver.getCurrentSpeed() - SPEED_INCREMENT);
 		
 	});
 	
 	socket.on("left",function(data){
-		console.log("left turn");				
-		driver.turnLeft();
+		console.log("left turn");
+		
+		driver.setRightWheelSpeed(driver.getCurrentSpeed() - SPEED_INCREMENT);
+		driver.setLeftWheelSpeed(driver.getCurrentSpeed() + SPEED_INCREMENT);
 	});
 	
 	socket.on("stop", function(data){

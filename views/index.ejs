@@ -35,11 +35,11 @@
 			});
 			
 			$("#btnLeft").click(function(){				
-				socket.emit("right",{ });				
+				socket.emit("left",{ });				
 			});
 			
 			$("#btnRight").click(function(){				
-				socket.emit("left",{ });
+				socket.emit("right",{ });
 			});
 						
 			$("#fwdBackSlider").slider({
