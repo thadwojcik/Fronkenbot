@@ -13,3 +13,21 @@
 .right{
 	float:right;
 }
+
+#btnFwd, #btnBack, #btnStop
+{
+	width:100%;
+}
+
+#leftBtnContainer input, 
+#rightBtnContainer input
+{
+	height:175px;
+	width:100%;
+}
+
+#leftWheelSlider,
+#rightWheelSlider
+{
+	height:350px;
+}

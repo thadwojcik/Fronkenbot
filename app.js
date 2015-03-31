@@ -6,7 +6,6 @@ var express= require("express"),
 	http=require("http"),
 	server=http.createServer(app).listen(3000),
     io = require("socket.io").listen(server);
-var SPEED_INCREMENT = 20;
 
 app.set('views', __dirname + '/views');
 app.set("view engine", "ejs");
@@ -20,31 +19,13 @@ var driver = new MaestroWrapper();
 io.on("connection", function(socket){
 	console.log("connection estasblished");
 	
-	socket.on("fwdBckSpeed",function(data){
-		//dumpObject(data);
-		console.log("fwdBckSpeed request");		
-		driver.forwardBackward(data.fwdBckSpeed);		
+	socket.on("setRightWheel",function(data){
+		driver.setRightWheelSpeed(data.speed);		
 	});	
 	
-	socket.on("right",function(data){
-		console.log("right turn");	
-		
-		driver.setRightWheelSpeed(driver.getCurrentSpeed() + SPEED_INCREMENT);
-		driver.setLeftWheelSpeed(driver.getCurrentSpeed() - SPEED_INCREMENT);
-		
-	});
-	
-	socket.on("left",function(data){
-		console.log("left turn");
-		
-		driver.setRightWheelSpeed(driver.getCurrentSpeed() - SPEED_INCREMENT);
-		driver.setLeftWheelSpeed(driver.getCurrentSpeed() + SPEED_INCREMENT);
-	});
-	
-	socket.on("stop", function(data){
-		console.log("stop request ");
-		driver.stop();		
-	});
+	socket.on("setLeftWheel",function(data){
+		driver.setLeftWheelSpeed(data.speed);
+	});	
 });
 
 /**

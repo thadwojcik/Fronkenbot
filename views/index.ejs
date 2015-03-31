@@ -11,58 +11,111 @@
 	<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-	<h1>Robot!</h1>
-	Current left Speed pulse rate: &nbsp;<span id="currentLeftSpeed" ></span><br/>
-	Current right Speed pulse rate: &nbsp;<span id="currentRightSpeed" ></span><br/>
-	left right value: <span id="currentLeftRight"></span><br/>
+	<h1>Robot!</h1>	
 	<script type="text/javascript">
-		const STOP_SPEED = 1465;
-		var socket=io.connect("http://192.168.1.119:3000");
+		const STOP_SPEED = 1465;// don't like this, should get the value from the server
+		const SLIDER_STEP = 15;
 		
+		var socket=io.connect("http://192.168.1.119:3000");		
 		var wheelState = {
 				leftSpeed: STOP_SPEED,
 				rightSpeed: STOP_SPEED
 		};
 		
-		$(document).ready(function(){
-			// initialize the speed
-			$("#currentLeftSpeed").text(STOP_SPEED);
-			$("#currentRightSpeed").text(STOP_SPEED);
-			
-			$("#btnStop").click(function(){
-				$("#fwdBackSlider").slider("value", STOP_SPEED);// don't like this, should get the value from the server
-				socket.emit("stop",{ });
+		$(document).ready(function(){					
+			$("#btnStop").click(function(){				
+				$("#leftWheelSlider").slider("value", STOP_SPEED);
+				$("#rightWheelSlider").slider("value", STOP_SPEED);
 			});
 			
-			$("#btnLeft").click(function(){				
-				socket.emit("left",{ });				
+			$("#btnFwd").click(function(){
+				//normalize to the smaller speed
+				var speedVal = $("#leftWheelSlider").slider("value") >= $("#rightWheelSlider").slider("value") ? $("#rightWheelSlider").slider("value"): $("#leftWheelSlider").slider("value");
+				speedVal += SLIDER_STEP;
+				$("#leftWheelSlider").slider("value", speedVal);
+				$("#rightWheelSlider").slider("value", speedVal);
 			});
 			
-			$("#btnRight").click(function(){				
-				socket.emit("right",{ });
+			$("#btnBack").click(function(){
+				//normalize to the smaller speed
+				var speedVal = $("#leftWheelSlider").slider("value") >= $("#rightWheelSlider").slider("value") ? $("#rightWheelSlider").slider("value"): $("#leftWheelSlider").slider("value");
+				speedVal -= SLIDER_STEP;
+				$("#leftWheelSlider").slider("value", speedVal);
+				$("#rightWheelSlider").slider("value", speedVal);
 			});
-						
-			$("#fwdBackSlider").slider({
+			
+			$("#btnLeftFwd").click(function(){
+				var leftSpeed = $("#leftWheelSlider").slider("value") + SLIDER_STEP;
+				$("#leftWheelSlider").slider("value", leftSpeed);
+			});
+			
+			$("#btnLeftBack").click(function(){
+				var leftSpeed = $("#leftWheelSlider").slider("value") - SLIDER_STEP;
+				$("#leftWheelSlider").slider("value", leftSpeed);
+			});
+			
+			$("#btnRightFwd").click(function(){
+				var rightSpeed = $("#rightWheelSlider").slider("value") + SLIDER_STEP;
+				$("#rightWheelSlider").slider("value", rightSpeed);
+			});
+			
+			$("#btnRightBack").click(function(){
+				var rightSpeed = $("#rightWheelSlider").slider("value") - SLIDER_STEP;
+				$("#rightWheelSlider").slider("value", rightSpeed);
+			});
+							
+			// strictly a UI component to indicate speed of the wheel
+			$("#leftWheelSlider").slider({
 				orientation: "vertical",
 				range: "min",
 				min: 640,
 				max: 2304,
+				step: SLIDER_STEP,
 				value: STOP_SPEED,
-				change:function( event, ui){									
-					socket.emit("fwdBckSpeed",{ fwdBckSpeed: ui.value} );
-				}				
+				change: function(event, ui){
+					socket.emit("setLeftWheel", {speed: ui.value} );
+				}
 			});
+			
+			// strictly a UI component to indicate speed of the wheel
+			$("#rightWheelSlider").slider({
+				orientation: "vertical",
+				range: "min",
+				min: 640,
+				max: 2304,
+				step: SLIDER_STEP,
+				value: STOP_SPEED,
+				change: function(event, ui){
+					socket.emit("setRightWheel", {speed: ui.value} );
+				}
+			});			
 		});
 		
 	</script>
-	<div>
-		<iframe id="vidFrame" src="http://192.168.1.119/clean.php" class="left" style="height:350px;width:600px;",></iframe>
-		<div id="fwdBackSlider" class="left" ></div>
-	</div> 
-	<input id="btnLeft" type ="button" value="left" />
-	<input id="btnStop" type="button" value="stop"/>
-	<input id="btnRight" type ="button" value="right" />
+	<div>		
+		<br class="clear"/>
+		<div>
+			<div id="leftBtnContainer" class="left">
+				<input id="btnLeftFwd" type="button" value="leftFwd" /><br />
+				<input id="btnLeftBack" type="button" value="leftBack" />				
+			</div>
+			<div id="leftWheelSlider" class="left" ></div>
+			<div class="left">
+				<input id="btnFwd" type="button" value="fwd" />
+				<div>
+					<iframe id="vidFrame" src="http://192.168.1.119/clean.php" style="height:350px;width:600px;",></iframe>
+				</div>
+				<input id="btnStop" type="button" value="stop" />
+				<input id="btnBack" type="button" value="back" />				
+			</div>
+			<div id="rightWheelSlider" class="left" ></div>
+			<div id="rightBtnContainer" class="left" />
+				<input id="btnRightFwd" type="button" value="rightFwd" /><br />
+				<input id="btnRightBack" type="button" value="rightBack" />
+			</div>
+		</div>
+		<br class="clear" />		
+	</div>
 	<br class="clear" />
-	
 </body>
 </html>
